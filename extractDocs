@@ -1,0 +1,31 @@
+import docxpy
+
+def extract_dialogues(filename, character):
+    doc_text = docxpy.process(filename)
+    lines = doc_text.split('\n')
+    dialogues = {}
+    counter = 1
+    for i in range(len(lines)):
+        if lines[i].strip() == character:
+            # Busca la siguiente línea no vacía
+            for j in range(i+1, len(lines)):
+                if lines[j].strip():
+                    # Elimina las comillas de la frase
+                    cleaned_line = lines[j].strip().replace('“', '').replace('”', '')
+                    dialogues[f"A_HOS_D_{str(counter).zfill(2)}"] = cleaned_line
+                    counter += 1
+                    break
+    return dialogues
+
+file = 'file.docx'
+character = 'MAIN CHARACTER:'
+dialogues = extract_dialogues(file, character)
+
+with open('AlanRef.txt', 'w') as f:
+    for key, value in dialogues.items():
+        f.write(f"{key} -> {value}\n")
+
+
+with open('names.txt', 'w') as f:
+    for key, value in dialogues.items():
+        f.write(f"{key}\n")
